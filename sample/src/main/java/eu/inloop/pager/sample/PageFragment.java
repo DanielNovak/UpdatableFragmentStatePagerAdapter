@@ -12,10 +12,10 @@ import java.util.Locale;
 
 public class PageFragment extends Fragment {
 
-    public static PageFragment newInstance(int position) {
+    public static PageFragment newInstance(String label) {
 
         Bundle args = new Bundle();
-        args.putInt("position", position);
+        args.putString("label", label);
         PageFragment fragment = new PageFragment();
         fragment.setArguments(args);
         return fragment;
@@ -30,10 +30,10 @@ public class PageFragment extends Fragment {
     @Override
     public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
-        ((TextView)view.findViewById(R.id.fragment_title)).setText(String.format(Locale.US, "%d", getSomeIdentifier()));
+        ((TextView)view.findViewById(R.id.fragment_title)).setText(String.format(Locale.US, "%s", getLabel()));
     }
 
-    public int getSomeIdentifier() {
-        return getArguments().getInt("position");
+    public String getLabel() {
+        return getArguments().getString("label");
     }
 }

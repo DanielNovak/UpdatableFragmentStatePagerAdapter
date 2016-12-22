@@ -10,99 +10,70 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import eu.inloop.pager.UpdatableFragmentPagerAdapter;
-
 public class MainActivity extends AppCompatActivity {
-
-    private ArrayList<Integer> sDataSet;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if (savedInstanceState == null) {
-            sDataSet = new ArrayList<>();
-            for (int i = 0; i < 6; i++) {
-                sDataSet.add(i);
-            }
-        } else {
-            sDataSet = savedInstanceState.getIntegerArrayList("dataset");
-        }
-
         final ViewPager viewPager = (ViewPager) findViewById(R.id.pager);
-        final PagerAdapter adapter = new PagerAdapter(getSupportFragmentManager(), sDataSet);
+        final TestPagerAdapter adapter = new TestPagerAdapter(getSupportFragmentManager());
         viewPager.setAdapter(adapter);
 
         findViewById(R.id.btn_shuffle).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Collections.shuffle(sDataSet);
-                adapter.notifyDataSetChanged();
-            }
-        });
-        findViewById(R.id.btn_add).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                sDataSet.add(sDataSet.size());
-                adapter.notifyDataSetChanged();
-            }
-        });
-        findViewById(R.id.btn_removeitem).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                if (sDataSet.size() > 0) {
-                    sDataSet.remove(sDataSet.size() - 1);
-                    adapter.notifyDataSetChanged();
-                }
+                adapter.toggleState();
             }
         });
     }
 
-    private static class PagerAdapter extends UpdatableFragmentPagerAdapter {
+    public static class TestPagerAdapter extends FragmentStatePagerAdapter {
+        private boolean mState = true;
 
-        private final List<Integer> mItems;
-
-        PagerAdapter(FragmentManager fm, List<Integer> items) {
-            super(fm);
-            mItems = items;
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            return PageFragment.newInstance(mItems.get(position));
+        public TestPagerAdapter(FragmentManager fragmentManager) {
+            super(fragmentManager);
         }
 
         @Override
         public int getCount() {
-            return mItems.size();
+            return 3;
         }
 
-        @Override
-        public long getItemId(int position) {
-            return mItems.get(position);
+        private void toggleState() {
+            mState = !mState;
+            notifyDataSetChanged();
         }
 
         @Override
         public int getItemPosition(Object object) {
-            PageFragment item = (PageFragment) object;
-            int itemValue = item.getSomeIdentifier();
-            for (int i = 0; i < mItems.size(); i++) {
-                if (mItems.get(i).equals(itemValue)) {
-                    return i;
-                }
+            String label = ((PageFragment) object).getLabel();
+            if (label.equals("A")) {
+                return 0;
+            } else if (label.equals("B")) {
+                return mState ? 1 : 2;
+            } else {
+                return mState ? 2 : 1;
             }
-            return POSITION_NONE;
         }
-    }
 
-    @Override
-    protected void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putIntegerArrayList("dataset", sDataSet);
+        @Override
+        public Fragment getItem(int position) {
+            String label;
+            switch (position) {
+                case 0:
+                    label = "A";
+                    break;
+                case 1:
+                    label = mState ? "B" : "C";
+                    break;
+                default:
+                    label = mState ? "C" : "B";
+                    break;
+            }
+
+            return PageFragment.newInstance(label);
+        }
     }
 }

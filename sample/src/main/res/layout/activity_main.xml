@@ -13,18 +13,6 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-        <Button
-            android:id="@+id/btn_add"
-            android:text="Add item"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
-        <Button
-            android:id="@+id/btn_removeitem"
-            android:text="Remove item"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content" />
-
     </LinearLayout>
 
     <android.support.v4.view.ViewPager
